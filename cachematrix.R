@@ -1,15 +1,35 @@
-## Put comments here that give an overall description of what your
-## functions do
+## functions supporting caching computationionally expensive operations on matrix objects
 
-## Write a short comment describing this function
-
+## create a special matrix wrapping list.
+## list exposes the following functions
+##  $get()              returns the last set matrix or the matrix that the list was created with.
+##  $set()              replaces matrix, clears any cached values.
+##  $setInverse()       sets the cached inverse for the matrix.
+##  $getInverse()       retrieves the cached invers for the matrix.
 makeCacheMatrix <- function(x = matrix()) {
-
+    i <- NULL
+    set <- function(y){
+        x <<- y
+        i <<- NULL
+    }
+    get <- function() x
+    setInverse <- function(inverse) i <<- inverse
+    getInverse <- function() i
+    list(set = set, get = get, setInverse = setInverse, getInverse = getInverse)
 }
 
 
-## Write a short comment describing this function
-
+## accepts a cacheMatrix list applies solve() to the matrix contained in the list
+## if there is not already a cached result.  otherwise returns cached result
+## for solve()
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+    i <- x$getInverse()
+    if (!is.null(i)){
+        message("returning cached data")
+        return(m)
+    }
+    data <- x$get()
+    i <- solve(data, ...)
+    x$setInverse(i)
+    i
 }
